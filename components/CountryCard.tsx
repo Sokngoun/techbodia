@@ -49,9 +49,10 @@ export default function CountryCard({
           <Card className="hover:cursor-pointer hover:scale-105 transition ease-in-out duration-200 hover:shadow-lg">
             <CardHeader className="p-0 border-b-[2px] border-b-gray-100">
               <Image
+              quality={100}
                 src={flag!}
-                width={350}
-                height={200}
+                width={400}
+                height={400}
                 alt=""
                 className="rounded-t-md h-[100px] w-full object-cover"
               />
@@ -98,15 +99,16 @@ export default function CountryCard({
             </CardContent>
           </Card>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] h-[400px]">
           <Card className="">
             <CardHeader className="p-0 border-b-[2px] border-b-gray-100">
               <Image
+              quality={100}
                 src={flag!}
-                width={350}
-                height={200}
+                width={400}
+                height={400}
                 alt=""
-                className="rounded-t-md h-[100px] w-full object-cover"
+                className="rounded-t-md h-[200px] w-full object-cover"
               />
             </CardHeader>
             <CardContent className="p-1 space-y-2">
