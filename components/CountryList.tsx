@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/pagination";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 type CountryListProps = {
   countryList: CountryType[];
@@ -20,19 +27,27 @@ export default function CountryList({ countryList }: CountryListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
   const [search, setSearch] = useState("");
+  const [sorted, setSorted] = useState<"asc" | "desc">("asc");
   const [filteredCountries, setFilteredCountries] =
     useState<CountryType[]>(countryList);
 
   useEffect(() => {
-    const filtered =
+    let filtered =
       search === ""
         ? countryList
         : countryList.filter((country) =>
             country.name.official.toLowerCase().includes(search.toLowerCase())
           );
-
+    console.log(sorted);
+    filtered = filtered.sort((a, b) => {
+      if (sorted === "asc") {
+        return a.name.official.localeCompare(b.name.official);
+      } else {
+        return b.name.official.localeCompare(a.name.official);
+      }
+    });
     setFilteredCountries(filtered);
-  }, [search, countryList]);
+  }, [search, countryList, sorted]);
 
   const lastItemIndex = currentPage * itemsPerPage;
   const firstItemIndex = lastItemIndex - itemsPerPage;
@@ -56,7 +71,7 @@ export default function CountryList({ countryList }: CountryListProps) {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-10 space-y-4">
-      <div>
+      <div className="flex flex-col md:flex-row gap-4 items-center">
         <Input
           placeholder="Search"
           onChange={(e) => {
@@ -65,6 +80,7 @@ export default function CountryList({ countryList }: CountryListProps) {
             setCurrentPage(1); // Reset to first page on search
           }}
         />
+        <Sort sorted={sorted} setSorted={setSorted} />
       </div>
       {countries.length > 0 ? (
         <div>
@@ -77,7 +93,7 @@ export default function CountryList({ countryList }: CountryListProps) {
                   flag={country.flags.png}
                   country_name={country.name.official}
                   native_name={country.nativeNames}
-                  altSpellings={country.altSpellings} 
+                  altSpellings={country.altSpellings}
                 />
               </div>
             ))}
@@ -167,5 +183,34 @@ function PaginationSection({
         </PaginationItem>
       </PaginationContent>
     </Pagination>
+  );
+}
+type SortProps = {
+  sorted: string;
+  setSorted: (value: "asc" | "desc") => void;
+};
+function Sort({ sorted, setSorted }: SortProps) {
+  const sort = ["asc", "desc"];
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="w-full flex justify-between md:justify-start gap-2 items-center">
+      <span>Sort By Name: </span>
+      <Select
+        open={open}
+        onOpenChange={setOpen}
+        onValueChange={(value) => setSorted(value as "asc" | "desc")}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={sorted.toUpperCase()} />
+        </SelectTrigger>
+        <SelectContent>
+          {sort.map((item, index) => (
+            <SelectItem value={item} key={index}>
+              {item.toUpperCase()}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
